@@ -3,71 +3,147 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Typing rhythm study</title>
+<title>Typing Rhythm Study</title>
 <style>
-  :root { --bg:#fbfaf7; --fg:#1d2330; --muted:#667085; --line:#d9d6cc; --accent:#1f5f8b; --ok:#2e7d32; --bad:#b3261e; }
-  @media (prefers-color-scheme: dark) {
-    :root { --bg:#14181f; --fg:#e8eaee; --muted:#9aa3b2; --line:#2c3441; --accent:#6bb4e6; --ok:#7ccf80; --bad:#f2877f; }
+  :root {
+    --bg:#f4f6fb; --card:#ffffff; --fg:#141a2a; --muted:#5d6678; --line:#e1e5ee;
+    --accent:#4f46e5; --accent2:#7c3aed; --accent-soft:#eef0ff;
+    --ok:#15803d; --ok-soft:#e7f6ec; --bad:#c2271d; --bad-soft:#fdecea;
+    --shadow:0 1px 2px rgba(20,26,42,.06), 0 12px 32px rgba(20,26,42,.08);
   }
-  * { box-sizing: border-box; }
-  body { margin:0; background:var(--bg); color:var(--fg); font:17px/1.55 Georgia, "Times New Roman", serif; }
-  main { max-width: 34rem; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
-  h1 { font-size: 1.7rem; line-height:1.2; margin: 0 0 .5rem; }
-  p { margin: .6rem 0; }
-  .muted { color: var(--muted); font-size: .95rem; }
-  label { display:block; margin: 1rem 0 .3rem; font-weight:bold; }
-  select, input[type=text] { width:100%; padding:.7rem .8rem; font: inherit; color: var(--fg); background: transparent; border:1px solid var(--line); border-radius:4px; }
-  input:focus, select:focus, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-  .phrase { font: 1.5rem/1.3 "Courier New", monospace; letter-spacing:.04em; padding:1rem; border-left:4px solid var(--accent); margin:1rem 0; }
-  #typing { font-family: "Courier New", monospace; font-size:1.2rem; }
-  button { font: inherit; padding:.7rem 1.2rem; border:0; border-radius:4px; background:var(--accent); color:#fff; cursor:pointer; margin-top:1rem; }
-  button:disabled { opacity:.45; cursor:not-allowed; }
-  .check { display:flex; gap:.6rem; align-items:flex-start; font-weight:normal; }
-  .check input { margin-top:.4rem; }
-  .bar { height:6px; background:var(--line); border-radius:3px; margin:1rem 0 .4rem; overflow:hidden; }
-  .bar div { height:100%; width:0; background:var(--accent); transition: width .25s; }
-  #status { min-height:1.6em; }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#0d1117; --card:#161c27; --fg:#e8ecf4; --muted:#9aa4b8; --line:#273044;
+      --accent:#8b8cff; --accent2:#b18cff; --accent-soft:#1f2440;
+      --ok:#6fdc8c; --ok-soft:#14301f; --bad:#ff8a80; --bad-soft:#3a1816;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 32px rgba(0,0,0,.35);
+    }
+  }
+  * { box-sizing:border-box; }
+  html { background:var(--bg); }
+  body {
+    margin:0; min-height:100vh; color:var(--fg);
+    font:16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background:
+      radial-gradient(900px 400px at 85% -10%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 70%),
+      radial-gradient(700px 360px at -10% 0%, color-mix(in srgb, var(--accent2) 12%, transparent), transparent 70%),
+      var(--bg);
+  }
+  main { max-width:36rem; margin:0 auto; padding:2.5rem 1.1rem 4rem; }
+  header { text-align:center; margin-bottom:1.6rem; }
+  .logo {
+    width:52px; height:52px; border-radius:14px; margin:0 auto 1rem;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    display:grid; place-items:center; color:#fff; box-shadow:0 8px 20px color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+  .logo svg { width:28px; height:28px; }
+  h1 { font-size:1.9rem; line-height:1.15; margin:0 0 .5rem; letter-spacing:-.02em; }
+  .sub { color:var(--muted); margin:0 auto; max-width:28rem; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:1.5rem; box-shadow:var(--shadow); }
+  .card + .card { margin-top:1rem; }
+  h2 { font-size:1.05rem; margin:0 0 .8rem; }
+  .facts { list-style:none; margin:0 0 1.2rem; padding:0; display:grid; gap:.6rem; }
+  .facts li { display:flex; gap:.7rem; align-items:flex-start; color:var(--muted); font-size:.95rem; }
+  .facts .ic { flex:none; width:24px; height:24px; border-radius:8px; display:grid; place-items:center; font-size:.8rem; font-weight:700; }
+  .yes .ic { background:var(--ok-soft); color:var(--ok); }
+  .no .ic { background:var(--bad-soft); color:var(--bad); }
+  .facts b { color:var(--fg); }
+  label.field { display:block; font-size:.85rem; font-weight:600; margin:1.1rem 0 .4rem; }
+  select, input[type=text] {
+    width:100%; padding:.8rem .9rem; font:inherit; color:var(--fg); background:var(--bg);
+    border:1.5px solid var(--line); border-radius:12px; transition:border-color .15s, box-shadow .15s;
+  }
+  select:focus, input[type=text]:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 4px color-mix(in srgb, var(--accent) 20%, transparent); }
+  .check { display:flex; gap:.7rem; align-items:flex-start; padding:.9rem; background:var(--accent-soft); border-radius:12px; font-size:.92rem; cursor:pointer; }
+  .check input { width:18px; height:18px; margin-top:.15rem; accent-color:var(--accent); flex:none; }
+  button {
+    width:100%; margin-top:1.3rem; padding:.9rem 1.2rem; font:inherit; font-weight:600; color:#fff; border:0; border-radius:12px; cursor:pointer;
+    background:linear-gradient(135deg,var(--accent),var(--accent2)); box-shadow:0 6px 16px color-mix(in srgb, var(--accent) 35%, transparent);
+    transition:transform .1s, opacity .15s;
+  }
+  button:hover:not(:disabled) { transform:translateY(-1px); }
+  button:disabled { opacity:.4; cursor:not-allowed; box-shadow:none; }
+  button:focus-visible { outline:3px solid color-mix(in srgb, var(--accent) 45%, transparent); outline-offset:2px; }
+  .topbar { display:flex; justify-content:space-between; align-items:center; gap:.6rem; flex-wrap:wrap; margin-bottom:1.1rem; }
+  .chip { font-size:.8rem; padding:.3rem .7rem; border-radius:999px; background:var(--accent-soft); color:var(--accent); font-weight:600; }
+  .chip.code { font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; letter-spacing:.05em; }
+  .hint { font-size:.82rem; color:var(--muted); margin:.2rem 0 0; }
+  .phrase {
+    font:600 1.55rem/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; letter-spacing:.04em; text-align:center;
+    padding:1.3rem .8rem; border-radius:14px; background:var(--bg); border:1.5px dashed var(--line); margin-bottom:1rem; word-break:break-word; user-select:none;
+  }
+  .phrase span { color:var(--muted); opacity:.65; transition:color .08s, opacity .08s; }
+  .phrase span.ok { color:var(--ok); opacity:1; }
+  .phrase span.bad { color:var(--bad); opacity:1; background:var(--bad-soft); border-radius:3px; }
+  .phrase span.cur { opacity:1; color:var(--fg); border-bottom:2px solid var(--accent); }
+  #typing { font:500 1.15rem ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-align:center; }
+  .dots { display:flex; gap:.4rem; justify-content:center; margin:1.2rem 0 .5rem; flex-wrap:wrap; }
+  .dots i { width:12px; height:12px; border-radius:50%; background:var(--line); transition:background .2s, transform .2s; }
+  .dots i.done { background:linear-gradient(135deg,var(--accent),var(--accent2)); }
+  .dots i.now { background:var(--accent-soft); outline:2px solid var(--accent); transform:scale(1.15); }
+  #progress { text-align:center; color:var(--muted); font-size:.88rem; margin:0; }
+  #status { text-align:center; min-height:1.8em; margin:.7rem 0 0; font-weight:600; font-size:.92rem; }
   #status.ok { color:var(--ok); } #status.bad { color:var(--bad); }
-  .code { font-family:"Courier New", monospace; font-weight:bold; }
+  #done { text-align:center; }
+  #done .big { font-size:2.6rem; margin-bottom:.3rem; }
+  .codebox { display:inline-block; margin:.6rem 0; padding:.6rem 1.1rem; border-radius:12px; background:var(--accent-soft); color:var(--accent); font:700 1.3rem ui-monospace, Menlo, Consolas, monospace; letter-spacing:.08em; }
+  footer { text-align:center; margin-top:1.4rem; font-size:.8rem; color:var(--muted); }
   [hidden] { display:none !important; }
 </style>
 </head>
 <body>
 <main>
-  <h1>Typing rhythm study</h1>
-  <p class="muted">I'm collecting how people type one short phrase, to publish an open dataset for keystroke-based authentication research.</p>
+  <header>
+    <div class="logo" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="3"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/></svg>
+    </div>
+    <h1>Typing Rhythm Study</h1>
+    <p class="sub">Help build an open dataset for keystroke-based authentication research. It takes about 2 minutes.</p>
+  </header>
 
-  <section id="consent">
-    <p><b>What is recorded:</b> only the timing of each key press and release while you type the phrase below, plus your device type and a random anonymous code. No name, email, IP address, or clock time.</p>
-    <p><b>Please don't</b> type a real password. The phrase is fixed and harmless.</p>
-    <label class="check"><input type="checkbox" id="agree"> I agree that my anonymous typing timings may be published publicly (CC BY 4.0).</label>
+  <section id="consent" class="card">
+    <h2>Before you start</h2>
+    <ul class="facts">
+      <li class="yes"><span class="ic">✓</span><span><b>Recorded:</b> only the timing of each key press and release while you type one phrase, plus your keyboard type and a random anonymous code.</span></li>
+      <li class="no"><span class="ic">✕</span><span><b>Never recorded:</b> your name, email, IP address, or the time of day. Please don't type a real password.</span></li>
+    </ul>
+    <label class="check"><input type="checkbox" id="agree"><span>I agree that my anonymous typing timings may be published publicly (CC BY 4.0).</span></label>
 
-    <label for="device">Keyboard</label>
+    <label class="field" for="device">Keyboard</label>
     <select id="device">
       <option value="laptop">Laptop built-in keyboard</option>
       <option value="external">External keyboard</option>
     </select>
 
-    <label for="codeIn">Returning? Enter your code (optional)</label>
+    <label class="field" for="codeIn">Returning? Enter your code (optional)</label>
     <input type="text" id="codeIn" placeholder="e.g. U-4F7K2Q" autocomplete="off">
 
-    <button id="start" disabled>Start</button>
+    <button id="start" disabled>Start typing</button>
   </section>
 
-  <section id="task" hidden>
-    <p class="muted">Your code: <span class="code" id="myCode"></span>. Save it so you can come back for another session on a different day.</p>
-    <div class="phrase" id="phrase"></div>
-    <label for="typing">Type the phrase exactly, then press Enter</label>
-    <input type="text" id="typing" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
-    <div class="bar"><div id="fill"></div></div>
-    <p id="progress" class="muted"></p>
+  <section id="task" class="card" hidden>
+    <div class="topbar">
+      <span class="chip code" id="myCode"></span>
+      <span class="chip" id="sessionChip"></span>
+    </div>
+    <p class="hint" style="margin-bottom:.9rem">Save your code to come back for another session on a different day.</p>
+    <div class="phrase" id="phrase" aria-label="Phrase to type"></div>
+    <label class="field" for="typing" style="margin-top:0">Type the phrase exactly, then press Enter</label>
+    <input type="text" id="typing" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Start typing here…">
+    <div class="dots" id="dots"></div>
+    <p id="progress"></p>
     <p id="status" role="status"></p>
   </section>
 
-  <section id="done" hidden>
-    <h1>Thank you!</h1>
-    <p>All samples are in. Your code is <span class="code" id="doneCode"></span>. Coming back on another day with the same code makes the dataset far more useful.</p>
+  <section id="done" class="card" hidden>
+    <div class="big">🎉</div>
+    <h2 style="font-size:1.4rem">Thank you!</h2>
+    <p style="color:var(--muted)">All samples for this session are in. Your code is</p>
+    <div class="codebox" id="doneCode"></div>
+    <p style="color:var(--muted)">Coming back on another day with the same code makes the dataset far more useful.</p>
   </section>
+
+  <footer>Anonymous · timing data only · no account needed</footer>
 </main>
 
 <script>
@@ -107,16 +183,36 @@ $("start").addEventListener("click", () => {
   store("session_" + uid, session); store("day_" + uid, today);
 
   $("myCode").textContent = uid; $("doneCode").textContent = uid;
-  $("phrase").textContent = PHRASE;
+  $("sessionChip").textContent = "Session " + session;
+  renderPhrase(""); buildDots();
   $("consent").hidden = true; $("task").hidden = false;
   resetSample(); updateProgress(); input.focus();
 });
 
+function renderPhrase(val) {
+  const el = $("phrase");
+  el.innerHTML = "";
+  for (let i = 0; i < PHRASE.length; i++) {
+    const s = document.createElement("span");
+    s.textContent = PHRASE[i] === " " ? "\u00A0" : PHRASE[i];
+    if (i < val.length) s.className = val[i] === PHRASE[i] ? "ok" : "bad";
+    else if (i === val.length) s.className = "cur";
+    el.appendChild(s);
+  }
+}
+function buildDots() {
+  const d = $("dots"); d.innerHTML = "";
+  for (let i = 0; i < SAMPLES_PER_SESSION; i++) d.appendChild(document.createElement("i"));
+}
+
+input.addEventListener("input", () => renderPhrase(input.value));
+
 function resetSample() {
-  events = []; pending = {}; t0 = null; backspaces = 0; input.value = "";
+  events = []; pending = {}; t0 = null; backspaces = 0; input.value = ""; renderPhrase("");
 }
 function updateProgress() {
-  $("fill").style.width = (n / SAMPLES_PER_SESSION * 100) + "%";
+  const dots = $("dots").children;
+  for (let i = 0; i < dots.length; i++) dots[i].className = i < n ? "done" : (i === n ? "now" : "");
   $("progress").textContent = "Sample " + Math.min(n + 1, SAMPLES_PER_SESSION) + " of " + SAMPLES_PER_SESSION;
 }
 function say(msg, cls) { const s = $("status"); s.textContent = msg; s.className = cls || ""; }
@@ -159,7 +255,7 @@ async function submit() {
   try {
     // text/plain avoids a CORS preflight, which Apps Script doesn't answer
     await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) });
-    n++; say("Saved.", "ok");
+    n++; say("Saved ✓", "ok");
   } catch (err) {
     say("Couldn't send. Check your connection and retype.", "bad");
   }
